@@ -44,14 +44,14 @@ contract AccessTokenERC721 is ERC721 {
 
     /// @param granterTokenId is the ID of the token you want to create an access token for
     /// @param receiver is the address you wish to mint the access token to
-    function createAccessToken(uint granterTokenId, address receiver)
+    function create(uint granterTokenId, address receiver)
         public
         onlyTokenOwner(granterTokenId)
     {
         /// @dev revoke access to previous access token if it exists
         uint accessTokenId = granterTokenToAccessToken[granterTokenId];
         if (accessTokenId != 0) {
-            revokeAccess(granterTokenId);
+            revoke(granterTokenId);
         }
 
         accessTokenToOwner[_accessTokenId.current()] = msg.sender;
@@ -65,10 +65,7 @@ contract AccessTokenERC721 is ERC721 {
     }
 
     /// @param granterTokenId is the ID of the token you want to revoke the access token for
-    function revokeAccess(uint granterTokenId)
-        public
-        onlyTokenOwner(granterTokenId)
-    {
+    function revoke(uint granterTokenId) public onlyTokenOwner(granterTokenId) {
         uint accessTokenId = granterTokenToAccessToken[granterTokenId];
         require(accessTokenId != 0, "no access token to revoke");
 

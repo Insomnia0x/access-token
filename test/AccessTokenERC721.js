@@ -17,16 +17,14 @@ describe("AccessTokenERC721 Tests", function () {
         return { nft, accessErc721, owner, accounts };
     }
 
-    describe("createAccessToken tests", function () {
+    describe("create tests", function () {
         it("Should revert when sender is not the token owner", async function () {
             const { nft, accessErc721, owner, accounts } = await loadFixture(
                 deployFixture
             );
 
             await expect(
-                accessErc721
-                    .connect(accounts[0])
-                    .createAccessToken(1, accounts[1].address)
+                accessErc721.connect(accounts[0]).create(1, accounts[1].address)
             ).to.be.revertedWith("caller is not the owner");
         });
 
@@ -36,7 +34,7 @@ describe("AccessTokenERC721 Tests", function () {
             );
 
             await expect(
-                accessErc721.createAccessToken(99999, owner.address)
+                accessErc721.create(99999, owner.address)
             ).to.be.revertedWith("ERC721: invalid token ID");
         });
 
@@ -45,10 +43,10 @@ describe("AccessTokenERC721 Tests", function () {
                 deployFixture
             );
 
-            await accessErc721.createAccessToken(1, owner.address);
+            await accessErc721.create(1, owner.address);
             expect(await accessErc721.isValid(1)).to.equal(true);
 
-            await accessErc721.createAccessToken(1, owner.address);
+            await accessErc721.create(1, owner.address);
             expect(await accessErc721.isValid(1)).to.equal(false);
             expect(await accessErc721.isValid(2)).to.equal(true);
         });
@@ -58,7 +56,7 @@ describe("AccessTokenERC721 Tests", function () {
                 deployFixture
             );
 
-            await accessErc721.createAccessToken(1, owner.address);
+            await accessErc721.create(1, owner.address);
 
             expect(await accessErc721.isValid(1)).to.equal(true);
         });
@@ -78,9 +76,9 @@ describe("AccessTokenERC721 Tests", function () {
                 deployFixture
             );
 
-            await accessErc721.createAccessToken(1, owner.address);
+            await accessErc721.create(1, owner.address);
             expect(await accessErc721.isValid(1)).to.equal(true);
-            await accessErc721.revokeAccess(1);
+            await accessErc721.revoke(1);
 
             expect(await accessErc721.isValid(1)).to.equal(false);
         });
@@ -90,7 +88,7 @@ describe("AccessTokenERC721 Tests", function () {
                 deployFixture
             );
 
-            await accessErc721.createAccessToken(1, owner.address);
+            await accessErc721.create(1, owner.address);
             expect(await accessErc721.isValid(1)).to.equal(true);
 
             await nft["safeTransferFrom(address,address,uint256)"](
@@ -103,16 +101,16 @@ describe("AccessTokenERC721 Tests", function () {
         });
     });
 
-    describe("revokeAccess tests", function () {
+    describe("revoke tests", function () {
         it("Should revert when sender is not the token owner", async function () {
             const { nft, accessErc721, owner, accounts } = await loadFixture(
                 deployFixture
             );
 
-            await accessErc721.createAccessToken(1, owner.address);
+            await accessErc721.create(1, owner.address);
 
             await expect(
-                accessErc721.connect(accounts[0]).revokeAccess(1)
+                accessErc721.connect(accounts[0]).revoke(1)
             ).to.be.revertedWith("caller is not the owner");
         });
 
@@ -121,9 +119,9 @@ describe("AccessTokenERC721 Tests", function () {
                 deployFixture
             );
 
-            await accessErc721.createAccessToken(1, owner.address);
+            await accessErc721.create(1, owner.address);
 
-            await expect(accessErc721.revokeAccess(9999)).to.be.revertedWith(
+            await expect(accessErc721.revoke(9999)).to.be.revertedWith(
                 "ERC721: invalid token ID"
             );
         });
@@ -133,10 +131,10 @@ describe("AccessTokenERC721 Tests", function () {
                 deployFixture
             );
 
-            await accessErc721.createAccessToken(1, owner.address);
+            await accessErc721.create(1, owner.address);
             await nft.mint();
 
-            await expect(accessErc721.revokeAccess(2)).to.be.revertedWith(
+            await expect(accessErc721.revoke(2)).to.be.revertedWith(
                 "no access token to revoke"
             );
         });
@@ -158,10 +156,10 @@ describe("AccessTokenERC721 Tests", function () {
                 deployFixture
             );
 
-            await accessErc721.createAccessToken(1, owner.address);
+            await accessErc721.create(1, owner.address);
             expect(await accessErc721.isValid(1)).to.equal(true);
 
-            await accessErc721.revokeAccess(1);
+            await accessErc721.revoke(1);
             expect(await accessErc721.isValid(1)).to.equal(false);
 
             expect(await accessErc721.tokenURI(1)).to.equal(
@@ -174,7 +172,7 @@ describe("AccessTokenERC721 Tests", function () {
                 deployFixture
             );
 
-            await accessErc721.createAccessToken(1, owner.address);
+            await accessErc721.create(1, owner.address);
             expect(await accessErc721.isValid(1)).to.equal(true);
 
             expect(await accessErc721.tokenURI(1)).to.equal(
@@ -189,7 +187,7 @@ describe("AccessTokenERC721 Tests", function () {
                 deployFixture
             );
 
-            await accessErc721.createAccessToken(1, owner.address);
+            await accessErc721.create(1, owner.address);
             await expect(
                 accessErc721.transferFrom(owner.address, accounts[0].address, 1)
             ).to.be.revertedWith("tranfer not allowed");
@@ -200,7 +198,7 @@ describe("AccessTokenERC721 Tests", function () {
                 deployFixture
             );
 
-            await accessErc721.createAccessToken(1, owner.address);
+            await accessErc721.create(1, owner.address);
             await expect(
                 accessErc721["safeTransferFrom(address,address,uint256)"](
                     owner.address,
@@ -215,7 +213,7 @@ describe("AccessTokenERC721 Tests", function () {
                 deployFixture
             );
 
-            await accessErc721.createAccessToken(1, owner.address);
+            await accessErc721.create(1, owner.address);
             await expect(
                 accessErc721["safeTransferFrom(address,address,uint256,bytes)"](
                     owner.address,
