@@ -22,7 +22,7 @@ contract AccessTokenERC721 is ERC721 {
     mapping(uint => uint) accessTokenToGranterToken;
     mapping(uint => uint) granterTokenToAccessToken;
 
-    /// @param nftContract_ is the address of the token contract you wish to create access tokens for
+    /// @param nftContract_ is the NFT contract address you wish to create access tokens for
     constructor(address nftContract_) ERC721("Access Token", "ACCESS") {
         nftContract = ERC721(nftContract_);
 
