@@ -42,45 +42,42 @@ contract AccessTokenERC721 is ERC721 {
         _;
     }
 
-    /// @param granterTokenId is the ID of the token you want to create an access token for
+    /// @param nftId is the ID of the NFT you want to create an access token for
     /// @param receiver is the address you wish to mint the access token to
-    function create(uint granterTokenId, address receiver)
-        public
-        onlyTokenOwner(granterTokenId)
-    {
+    function create(uint nftId, address receiver) public onlyTokenOwner(nftId) {
         /// @dev revoke access to previous access token if it exists
-        uint accessTokenId = granterTokenToAccessToken[granterTokenId];
+        uint accessTokenId = granterTokenToAccessToken[nftId];
         if (accessTokenId != 0) {
-            revoke(granterTokenId);
+            revoke(nftId);
         }
 
         accessTokenToOwner[_accessTokenId.current()] = msg.sender;
-        granterTokenToOwner[granterTokenId] = msg.sender;
-        accessTokenToGranterToken[_accessTokenId.current()] = granterTokenId;
-        granterTokenToAccessToken[granterTokenId] = _accessTokenId.current();
+        granterTokenToOwner[nftId] = msg.sender;
+        accessTokenToGranterToken[_accessTokenId.current()] = nftId;
+        granterTokenToAccessToken[nftId] = _accessTokenId.current();
 
         _safeMint(receiver, _accessTokenId.current());
 
         _accessTokenId.increment();
     }
 
-    /// @param granterTokenId is the ID of the token you want to revoke the access token for
-    function revoke(uint granterTokenId) public onlyTokenOwner(granterTokenId) {
-        uint accessTokenId = granterTokenToAccessToken[granterTokenId];
+    /// @param nftId is the ID of the NFT you want to revoke the access token for
+    function revoke(uint nftId) public onlyTokenOwner(nftId) {
+        uint accessTokenId = granterTokenToAccessToken[nftId];
         require(accessTokenId != 0, "no access token to revoke");
 
         accessTokenToOwner[accessTokenId] = address(0);
-        granterTokenToOwner[granterTokenId] = address(0);
+        granterTokenToOwner[nftId] = address(0);
     }
 
-    /// @param accessTokenId is the ID of the access token
-    function isValid(uint accessTokenId) external view returns (bool) {
+    /// @param tokenId is the ID of the access token
+    function isValid(uint tokenId) external view returns (bool) {
         /// @dev ensures the token has an access token
-        if (accessTokenToOwner[accessTokenId] == address(0)) {
+        if (accessTokenToOwner[tokenId] == address(0)) {
             return false;
         }
 
-        uint granterTokenId = accessTokenToGranterToken[accessTokenId];
+        uint granterTokenId = accessTokenToGranterToken[tokenId];
 
         /// @dev ensure the token still in the wallet that created the access token
         address currentOwner = nftContract.ownerOf(granterTokenId);
