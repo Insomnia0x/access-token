@@ -1,6 +1,6 @@
 # Access Token Protocol
 
-** This is a proof of concept and a work in progress **
+**This is a proof of concept and a work in progress**
 
 ### The Problem:
 
