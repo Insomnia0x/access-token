@@ -15,16 +15,16 @@ contract AccessTokenERC721 is ERC721 {
     string validUri;
     string invalidUri;
 
-    ERC721 token;
+    ERC721 nftContract;
 
     mapping(uint => address) accessTokenToOwner;
     mapping(uint => address) granterTokenToOwner;
     mapping(uint => uint) accessTokenToGranterToken;
     mapping(uint => uint) granterTokenToAccessToken;
 
-    /// @param token_ is the address of the token contract you wish to create access tokens for
-    constructor(address token_) ERC721("Access Token", "ACCESS") {
-        token = ERC721(token_);
+    /// @param nftContract_ is the address of the token contract you wish to create access tokens for
+    constructor(address nftContract_) ERC721("Access Token", "ACCESS") {
+        nftContract = ERC721(nftContract_);
 
         /// @dev _accessTokenId starts counting at 1, use default uint (0) to check against tokens that dont exist
         _accessTokenId.increment();
@@ -36,7 +36,7 @@ contract AccessTokenERC721 is ERC721 {
 
     modifier onlyTokenOwner(uint tokenId) {
         require(
-            msg.sender == token.ownerOf(tokenId),
+            msg.sender == nftContract.ownerOf(tokenId),
             "caller is not the owner"
         );
         _;
@@ -83,7 +83,7 @@ contract AccessTokenERC721 is ERC721 {
         uint granterTokenId = accessTokenToGranterToken[accessTokenId];
 
         /// @dev ensure the token still in the wallet that created the access token
-        address currentOwner = token.ownerOf(granterTokenId);
+        address currentOwner = nftContract.ownerOf(granterTokenId);
         return currentOwner == granterTokenToOwner[granterTokenId];
     }
 
